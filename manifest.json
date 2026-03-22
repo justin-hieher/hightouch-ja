@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "Hightouch 日本語化",
+  "version": "1.0.0",
+  "description": "Hightouch のUIを日本語に翻訳します。Chrome・Microsoft Edge に対応しています。",
+
+  "permissions": [
+    "storage"
+  ],
+
+  "host_permissions": [
+    "https://app.hightouch.com/*"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": ["https://app.hightouch.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Hightouch 日本語化",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
+  },
+
+  "web_accessible_resources": [
+    {
+      "resources": ["translations/ja.json"],
+      "matches": ["https://app.hightouch.com/*"]
+    }
+  ]
+}

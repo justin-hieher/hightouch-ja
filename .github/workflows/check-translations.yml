@@ -1,0 +1,169 @@
+name: 翻訳カバレッジ チェック
+
+# 毎週月曜日 AM 9:00（JST = UTC+9、なのでUTC 0:00）に実行
+# 手動実行も可能
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Hightouch UI の翻訳カバレッジを確認
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Node.js をセットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Playwright をインストール
+        run: |
+          npm install -D @playwright/test
+          npx playwright install --with-deps chromium
+
+      - name: 翻訳キーをロード
+        id: load-keys
+        run: |
+          # ja.json から翻訳キーの一覧を取得（_comment を除外）
+          node -e "
+            const fs = require('fs');
+            const data = JSON.parse(fs.readFileSync('translations/ja.json', 'utf8'));
+            delete data['_comment'];
+            const keys = Object.keys(data);
+            console.log('TOTAL_KEYS=' + keys.length);
+            fs.writeFileSync('/tmp/translation_keys.json', JSON.stringify(keys));
+          " >> $GITHUB_OUTPUT
+
+      - name: Hightouch ログインページのテキストを確認
+        id: check-page
+        run: |
+          node -e "
+          const { chromium } = require('@playwright/test');
+          const fs = require('fs');
+
+          (async () => {
+            const keys = JSON.parse(fs.readFileSync('/tmp/translation_keys.json', 'utf8'));
+
+            // 確認対象キーワード（ログイン不要のページで見えるものに限定）
+            const CHECK_KEYWORDS = [
+              'Sign in', 'Sign up', 'Email', 'Password',
+              'Forgot password', 'Log in', 'Get started',
+              'Continue', 'or', 'Privacy', 'Terms'
+            ];
+
+            const browser = await chromium.launch();
+            const page = await browser.newPage();
+
+            try {
+              await page.goto('https://app.hightouch.com/login', { timeout: 30000 });
+              await page.waitForTimeout(3000);
+              const bodyText = await page.evaluate(() => document.body.innerText);
+
+              // メインナビゲーションキーワードが消えた数をカウント
+              const MAIN_NAV_KEYS = ['Syncs', 'Models', 'Destinations', 'Sources', 'Audiences'];
+              let missingCount = 0;
+              let foundCount = 0;
+
+              for (const keyword of CHECK_KEYWORDS) {
+                if (bodyText.includes(keyword)) {
+                  foundCount++;
+                } else {
+                  missingCount++;
+                }
+              }
+
+              const coverage = Math.round((foundCount / CHECK_KEYWORDS.length) * 100);
+              console.log('COVERAGE=' + coverage);
+              console.log('MISSING=' + missingCount);
+              console.log('FOUND=' + foundCount);
+              console.log('TOTAL_CHECKED=' + CHECK_KEYWORDS.length);
+
+              fs.writeFileSync('/tmp/check_result.json', JSON.stringify({
+                coverage, missingCount, foundCount,
+                totalChecked: CHECK_KEYWORDS.length,
+                checkedAt: new Date().toISOString()
+              }));
+
+            } catch (e) {
+              console.log('COVERAGE=-1');
+              console.log('ERROR=' + e.message);
+              fs.writeFileSync('/tmp/check_result.json', JSON.stringify({
+                coverage: -1, error: e.message,
+                checkedAt: new Date().toISOString()
+              }));
+            } finally {
+              await browser.close();
+            }
+          })();
+          "
+
+      - name: チェック結果を評価して Issue を作成
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const result = JSON.parse(fs.readFileSync('/tmp/check_result.json', 'utf8'));
+
+            console.log('チェック結果:', result);
+
+            // エラーまたはカバレッジが 60% 未満の場合に Issue を作成
+            const shouldAlert = result.coverage === -1 || result.coverage < 60;
+
+            if (!shouldAlert) {
+              console.log(`✅ カバレッジ: ${result.coverage}% — 問題なし`);
+              return;
+            }
+
+            // 既存の未解決 Issue を確認（重複作成を防ぐ）
+            const existingIssues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'translation-alert'
+            });
+
+            if (existingIssues.data.length > 0) {
+              console.log('既存のアラート Issue が未解決のためスキップします');
+              return;
+            }
+
+            // Issue を作成
+            const title = result.coverage === -1
+              ? '⚠️ 翻訳チェック: Hightouch ページへのアクセスに失敗しました'
+              : `⚠️ 翻訳カバレッジ低下: ${result.coverage}% (${result.missingCount}件のキーが未検出)`;
+
+            const body = [
+              '## 翻訳カバレッジ アラート',
+              '',
+              `- **確認日時**: ${result.checkedAt}`,
+              `- **カバレッジ**: ${result.coverage === -1 ? 'エラー' : result.coverage + '%'}`,
+              result.coverage !== -1 ? `- **確認済みキー**: ${result.foundCount} / ${result.totalChecked} 件` : '',
+              result.error ? `- **エラー内容**: ${result.error}` : '',
+              '',
+              '## 対応手順',
+              '',
+              '1. [app.hightouch.com](https://app.hightouch.com) にアクセスしてUIの変更を確認する',
+              '2. 変更されたUI要素のテキストを特定する',
+              '3. `translations/ja.json` の該当キーを修正する',
+              '4. `translations/glossary.md` も合わせて更新する',
+              '5. Pull Request を作成してレビューを依頼する',
+              '6. マージ後、この Issue をクローズする',
+              '',
+              '---',
+              '*このIssueはGitHub Actionsにより自動作成されました*'
+            ].filter(Boolean).join('\n');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ['translation-alert']
+            });
+
+            console.log('⚠️ アラート Issue を作成しました');

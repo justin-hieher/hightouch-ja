@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hightouch 日本語化</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 280px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      color: #1a1a2e;
+      background: #ffffff;
+    }
+
+    .header {
+      background: #6C47FF;
+      color: white;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .header-subtitle {
+      font-size: 11px;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+
+    .body {
+      padding: 16px;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .toggle-label {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .toggle-desc {
+      font-size: 11px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    /* トグルスイッチ */
+    .toggle-switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #ccc;
+      border-radius: 24px;
+      transition: background 0.2s;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      top: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+
+    input:checked + .slider {
+      background: #6C47FF;
+    }
+
+    input:checked + .slider::before {
+      transform: translateX(20px);
+    }
+
+    .stats {
+      margin-top: 14px;
+      padding: 10px 12px;
+      background: #f8f7ff;
+      border-radius: 8px;
+      border: 1px solid #ede9ff;
+    }
+
+    .stats-label {
+      font-size: 11px;
+      color: #6C47FF;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    .stats-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a1a2e;
+    }
+
+    .stats-unit {
+      font-size: 12px;
+      color: #888;
+      margin-left: 4px;
+    }
+
+    .disabled-notice {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #aaa;
+      text-align: center;
+    }
+
+    .version-bar {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #aaa;
+    }
+
+    .version-bar a {
+      color: #6C47FF;
+      text-decoration: none;
+      font-size: 11px;
+    }
+
+    .version-bar a:hover {
+      text-decoration: underline;
+    }
+
+    .footer {
+      padding: 10px 16px 14px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .link-btn {
+      flex: 1;
+      text-align: center;
+      font-size: 11px;
+      color: #6C47FF;
+      text-decoration: none;
+      padding: 6px 4px;
+      border: 1px solid #ede9ff;
+      border-radius: 6px;
+      cursor: pointer;
+      background: none;
+      transition: background 0.15s;
+    }
+
+    .link-btn:hover {
+      background: #f8f7ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <div class="header-title">Hightouch 日本語化</div>
+      <div class="header-subtitle">by Yuki Kobayashi</div>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="toggle-row">
+      <div>
+        <div class="toggle-label">日本語翻訳</div>
+        <div class="toggle-desc">Hightouch UI を日本語で表示</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="enableToggle" checked />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="stats" id="statsSection">
+      <div class="stats-label">登録済み用語数</div>
+      <div>
+        <span class="stats-value" id="termCount">—</span>
+        <span class="stats-unit">件</span>
+      </div>
+    </div>
+
+    <div class="disabled-notice" id="disabledNotice" style="display:none;">
+      翻訳が無効です。トグルをONにしてページをリロードしてください。
+    </div>
+
+    <div class="version-bar">
+      <span id="versionDisplay"></span>
+      <a id="releasesLink" href="#" target="_blank">アップデートを確認 →</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a
+      class="link-btn"
+      id="glossaryLink"
+      href="#"
+      target="_blank"
+      title="用語カタログ（GitHub）を開く"
+    >
+      📖 用語カタログ
+    </a>
+    <a
+      class="link-btn"
+      id="githubLink"
+      href="#"
+      target="_blank"
+      title="GitHubリポジトリを開く"
+    >
+      🐙 GitHub
+    </a>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
