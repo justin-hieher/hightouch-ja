@@ -24,8 +24,9 @@ except ImportError:
 
 import os
 
-BG_COLOR   = (108, 71, 255)   # #6C47FF — Hightouch ブランドカラー
-LOGO_COLOR = (255, 255, 255)  # 白
+BG_COLOR   = (255, 255, 255)  # 白
+LOGO_COLOR = (16, 17, 17)     # #101111 — Hightouch ロゴカラー（黒）
+TEXT_COLOR = (255, 255, 255)  # 白（JP テキスト）
 
 # Hightouch SVG (viewBox 0 0 97 97) の2つの矩形
 # 大きい矩形（右上）: (33, 2) → (95, 64)
@@ -39,13 +40,10 @@ def create_icon(size: int, filename: str):
     img  = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
-    # 背景の丸角矩形
+    # 背景（白）
+    draw.rectangle([0, 0, size, size], fill=BG_COLOR)
+
     margin = size // 8
-    draw.rounded_rectangle(
-        [margin, margin, size - margin, size - margin],
-        radius=size // 5,
-        fill=BG_COLOR,
-    )
 
     # ロゴを usable エリアにスケール
     usable = size - 2 * margin
@@ -105,7 +103,7 @@ def create_icon(size: int, filename: str):
             draw.text(
                 (sq_cx - tw / 2, sq_cy - th / 2),
                 text,
-                fill=BG_COLOR,
+                fill=TEXT_COLOR,
                 font=font,
             )
         except Exception:
