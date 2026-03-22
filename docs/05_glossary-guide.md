@@ -88,7 +88,7 @@
 1. リポジトリをフォークする
 2. `translations/glossary.md` を編集する
 3. Pull Request を作成する
-4. DearOneチームがレビューして承認・マージ
+4. Pull Request を確認のうえ、問題なければマージ（対応時期・可否は保証しません）
 
 詳細は [06. 貢献・共有方法](./06_contributing.md) を参照してください。
 
