@@ -69,9 +69,9 @@ def create_icon(size: int, filename: str):
         fill=LOGO_COLOR,
     )
 
-    # "JP" テキストを小さい矩形の中央に配置（32px 以上のみ）
+    # "JP" テキストを大きい矩形の中央に配置（32px 以上のみ）
     if size >= 32:
-        x1, y1, x2, y2 = SMALL_RECT
+        x1, y1, x2, y2 = LARGE_RECT
         sq_cx = ox + (x1 + x2) / 2 * scale
         sq_cy = oy + (y1 + y2) / 2 * scale
         sq_w  = (x2 - x1) * scale
