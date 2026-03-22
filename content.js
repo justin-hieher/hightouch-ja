@@ -114,7 +114,7 @@ function isExcluded(element) {
  */
 // UIラベルの最大文字数。これを超えるテキストはユーザーデータの可能性があるためスキップする。
 // data-ht-original 属性にユーザーデータが誤って保存されることを防ぐ。
-const MAX_TRANSLATE_LENGTH = 400;
+const MAX_TRANSLATE_LENGTH = 500;
 
 function translateTextNode(node) {
   const parent = node.parentElement;
