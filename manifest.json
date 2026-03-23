@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Hightouch 日本語化",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Hightouch のUIを日本語に翻訳します。Chrome・Microsoft Edge に対応しています。",
 
   "permissions": [

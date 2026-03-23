@@ -191,7 +191,16 @@ function translateNode(rootNode) {
       const fullText = normalizeForLookup(rawText);
       if (fullText && translations[fullText]) {
         rootNode.setAttribute("data-ht-original", fullText);
-        rootNode.textContent = translations[fullText];
+        // rootNode.textContent への直接代入は React が管理する子ノード（<wbr> 等）を
+        // まるごと破壊し、React の removeChild 時に NotFoundError を引き起こすため、
+        // テキストノードのみを個別に更新する。
+        const textNodes = Array.from(rootNode.childNodes).filter(
+          (n) => n.nodeType === Node.TEXT_NODE
+        );
+        if (textNodes.length > 0) {
+          textNodes[0].textContent = translations[fullText];
+          textNodes.slice(1).forEach((n) => { n.textContent = ""; });
+        }
         return;
       }
     }
