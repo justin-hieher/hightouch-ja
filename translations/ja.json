@@ -15,7 +15,7 @@
     }
   ],
   "% of audience": "オーディエンスの割合",
-  ") for storing logs of previously-synced data, which helps improve sync speed. Then, it grants the necessary permissions to your Databricks user or service principal. Before running the snippet, make sure to include your own username, which can be found in the top right corner of the Databricks web console. Alternatively, you can create an API-only service principal by following ": "）で同期済みデータのログを保存するスキーマをプロビジョニングします。これにより同期速度が向上します。また、Databricksユーザーまたはサービスプリンシパルへのアクセスに必要な権限を付与します。スニペットを実行する前に、Databricks管理コンソールの右上で確認できるご自身のユーザー名を入力してください。または、",
+  ") for storing logs of previously-synced data, which helps improve sync speed. Then, it grants the necessary permissions to your Databricks user or service principal. Before running the snippet, make sure to include your own username, which can be found in the top right corner of the Databricks web console. Alternatively, you can create an API-only service principal by following": "）で同期済みデータのログを保存するスキーマをプロビジョニングします。これにより同期速度が向上します。また、Databricksユーザーまたはサービスプリンシパルへのアクセスに必要な権限を付与します。スニペットを実行する前に、Databricks管理コンソールの右上で確認できるご自身のユーザー名を入力してください。または、",
   "(optional)": "（任意）",
   "(View logs)": "（ログを表示）",
   ", sorted by": "、並び順:",
