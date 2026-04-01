@@ -114,7 +114,8 @@ function isExcluded(element) {
  */
 // UIラベルの最大文字数。これを超えるテキストはユーザーデータの可能性があるためスキップする。
 // data-ht-original 属性にユーザーデータが誤って保存されることを防ぐ。
-const MAX_TRANSLATE_LENGTH = 500;
+// 注意: 一部の長いUI説明文（Databricks設定の説明など）は500字を超えるため1000に設定。
+const MAX_TRANSLATE_LENGTH = 1000;
 
 function translateTextNode(node) {
   const parent = node.parentElement;
