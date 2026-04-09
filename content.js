@@ -160,6 +160,59 @@ function translateTextNode(node) {
 }
 
 /**
+ * SPAN子要素を含む混合コンテンツ要素を翻訳する
+ * 例: "Send <span>CRITICAL</span> alert" → "<span>CRITICAL</span>アラートを送信"
+ *
+ * 子スパンのテキストが翻訳結果に含まれる場合はスパンを適切な位置に保持する。
+ * 含まれない場合（下線付きツールチップトリガーなど）はフォールバックとして
+ * 最初のテキストノードに翻訳全文を入れ、子スパンを空にする。
+ *
+ * ※ 直接テキストノードが存在する要素のみを対象とする（アイコン+テキストの
+ *   ナビ項目のような「テキストノードなし」要素には適用しない）。
+ */
+function applyMixedSpanTranslation(element, significantChildren, directTextNodes, translation) {
+  element.setAttribute("data-ht-original", element.textContent.trim());
+
+  if (significantChildren.length === 1) {
+    const childSpan = significantChildren[0];
+    const childText = childSpan.textContent;
+    const idx = translation.indexOf(childText);
+
+    if (idx !== -1) {
+      // 子スパンのテキストが翻訳に含まれる → スパンを保持しつつ前後テキストを更新
+      const before = translation.substring(0, idx);
+      const after = translation.substring(idx + childText.length);
+
+      let foundChild = false;
+      const textBefore = [], textAfter = [];
+      element.childNodes.forEach(node => {
+        if (node === childSpan) { foundChild = true; return; }
+        if (node.nodeType === Node.TEXT_NODE) {
+          (foundChild ? textAfter : textBefore).push(node);
+        }
+      });
+
+      if (textBefore.length > 0) {
+        textBefore[0].textContent = before;
+        textBefore.slice(1).forEach(n => { n.textContent = ""; });
+      }
+      if (textAfter.length > 0) {
+        textAfter[0].textContent = after;
+        textAfter.slice(1).forEach(n => { n.textContent = ""; });
+      }
+      return;
+    }
+  }
+
+  // フォールバック: 直接テキストノードが存在する場合のみ最初のノードに翻訳を入れ、子スパンを空にする
+  if (directTextNodes.length > 0) {
+    directTextNodes[0].textContent = translation;
+    directTextNodes.slice(1).forEach(n => { n.textContent = ""; });
+    significantChildren.forEach(s => { s.textContent = ""; });
+  }
+}
+
+/**
  * 要素ツリーを再帰的に走査してテキストノードを翻訳する
  */
 function translateNode(rootNode) {
@@ -203,6 +256,35 @@ function translateNode(rootNode) {
           textNodes.slice(1).forEach((n) => { n.textContent = ""; });
         }
         return;
+      }
+    } else if (significantChildren.every(c => c.tagName === "SPAN")) {
+      // 全 significant 子要素が SPAN の混合コンテンツ要素
+      // 例: "Send <span>CRITICAL</span> alert"
+      //
+      // ★ 重要: 直接テキストノードがある場合のみ処理する。
+      //   アイコン+ラベルのナビ項目（<icon-span><text-span>）のような
+      //   「テキストノードなし」要素に適用するとラベルが消えるバグを防ぐ。
+      const directTextNodes = Array.from(rootNode.childNodes).filter(
+        n => n.nodeType === Node.TEXT_NODE && n.textContent.trim()
+      );
+      if (directTextNodes.length > 0) {
+        const rawText = rootNode.textContent.trim();
+        if (rawText && rawText.length <= MAX_TRANSLATE_LENGTH) {
+          const fullText = normalizeForLookup(rawText);
+          if (fullText && translations[fullText]) {
+            applyMixedSpanTranslation(rootNode, significantChildren, directTextNodes, translations[fullText]);
+            return;
+          }
+          for (const tmpl of templates) {
+            if (tmpl.regex.test(fullText)) {
+              const translated = fullText.replace(tmpl.regex, tmpl.replacement);
+              if (translated !== fullText) {
+                applyMixedSpanTranslation(rootNode, significantChildren, directTextNodes, translated);
+                return;
+              }
+            }
+          }
+        }
       }
     }
   }

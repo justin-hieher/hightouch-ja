@@ -12,6 +12,10 @@
     {
       "pattern": "^This engine offers the best sync performance for (.+?) and unlocks additional platform features\\. It uses a dedicated schema in (.+?) to store temporary tables that help Hightouch efficiently track changes to your data\\.$",
       "replacement": "このエンジンは$1の同期パフォーマンスを最大化し、追加のプラットフォーム機能を利用できます。$2の専用スキーマを使用して一時テーブルを保存し、Hightouchがデータの変更を効率的に追跡します。"
+    },
+    {
+      "pattern": "^(\\d+) days?$",
+      "replacement": "$1日間"
     }
   ],
   "% of audience": "オーディエンスの割合",
@@ -27,6 +31,8 @@
   ". Use the generated": "。生成された",
   "1:many": "1対多",
   "A catalog is the first layer of Unity Catalog's three-level namespace. If Lightning engine is enabled, the 'hightouch_audit' and 'hightouch_planner'": "カタログはUnity Catalogの3階層ネームスペースの第1層です。Lightningエンジンが有効な場合、'hightouch_audit'と'hightouch_planner'",
+  "A fatal error occurs when a sync experiences a problem that prevents it from running. (e.g., expired source or destination credentials, invalid SQL syntax, network issues, etc.)": "致命的なエラーは、同期の実行を妨げる問題が発生した場合に起こります（例：ソースまたは送信先の認証情報の期限切れ、無効なSQL構文、ネットワーク障害など）。",
+  "A row is considered \"rejected\" when it cannot be synced to the destination during a sync run. Rejections can happen for many reasons, including destination API errors, invalid/corrupt data, or failed lookups.": "行は、同期実行中に送信先に同期できない場合に「拒否」とみなされます。拒否は、送信先APIエラー・無効または破損したデータ・ルックアップ失敗など、さまざまな理由で発生します。",
   "A schema is the second layer of Unity Catalog's three-level namespace. This is the initial schema to use for the connection.": "スキーマはUnity Catalogの3層ネームスペースの第2層です。接続時に使用する初期スキーマです。",
   "A trait is a calculated column based on data from a related or event model. Once created, it acts like a new column on the model and can be used across Customer Studio including in audiences, journeys, and syncs.": "トレートは関連モデルまたはイベントモデルのデータをもとに計算されるカラムです。作成後はモデルの新しいカラムとして機能し、Customer Studio全体（オーディエンス・ジャーニー・同期など）で利用できます。",
   "A trait is a calculated column based on data from a related or event model. Once created, it acts like a new column on the model and can be used across Customer Studio including in audiences, journeys, and syncs. Learn more.": "トレートは関連モデルまたはイベントモデルのデータをもとに計算されるカラムです。作成後はモデルの新しいカラムとして機能し、Customer Studio全体（オーディエンス・ジャーニー・同期など）で利用できます。詳細を見る",
@@ -109,6 +115,7 @@
   "All parent models in this workspace": "このワークスペースのすべての親モデル",
   "All sources in this workspace": "このワークスペースのすべてのソース",
   "All syncs": "すべての同期",
+  "An operation is performed whenever a row is added, changed, or removed in a destination. This counts successful operations only; rejected operations are excluded.": "オペレーションは、送信先で行が追加・変更・削除されるたびに実行されます。成功したオペレーションのみをカウントし、拒否されたオペレーションは除外されます。",
   "Analytics": "アナリティクス",
   "and navigate to the": "移動してください",
   "and other user-queryable tables.": "およびその他のユーザークエリ可能なテーブル。",
@@ -652,6 +659,7 @@
   "Include": "含める",
   "Include members in audience if they...": "次の条件を満たすメンバーをオーディエンスに含める",
   "indefinitely": "無期限に",
+  "in the last": "直近",
   "Inference log": "推論ログ",
   "Inference providers": "推論プロバイダー",
   "Ingest raw data from a cloud bucket or file server.": "クラウドバケットまたはファイルサーバーから生データを取り込みます。",
@@ -743,6 +751,7 @@
   "Model": "モデル",
   "Model or audience size": "モデルまたはオーディエンスサイズ",
   "Model size": "モデルサイズ",
+  "Model size is the total number of queried rows when your sync runs. Model size is different from the number of sync operations.": "モデルサイズは同期実行時にクエリされる行の総数です。モデルサイズは同期操作の数とは異なります。",
   "Models": "モデル",
   "Monday": "月曜日",
   "Monitoring": "モニタリング",
@@ -1067,6 +1076,8 @@
   "Send conversion events for campaign optimization and measurement": "キャンペーン最適化と計測のためにコンバージョンイベントを送信します",
   "Send conversion web events to X and run campaigns with custom audiences, retargeting, and lookalikes directly from your warehouse": "コンバージョンWebイベントをXに送信し、ウェアハウスから直接カスタムオーディエンス・リターゲティング・類似オーディエンスでキャンペーンを実行します",
   "Send critical alerts only": "クリティカルなアラートのみ送信",
+  "Send CRITICAL alert": "CRITICALアラートを送信",
+  "Send WARNING alert": "WARNINGアラートを送信",
   "Send events from your data warehouse to TikTok using TikTok's pixels": "TikTokのピクセルを使用してデータウェアハウスからTikTokにイベントを送信します",
   "Send lifecycle emails to customers based on their recent activity in the product (like abandoning a shopping cart)": "製品での最近のアクティビティ（カート放棄など）に基づいてライフサイクルメールを送信します",
   "Send metrics and events to other tools": "メトリクスとイベントを他のツールに送信",
@@ -1183,6 +1194,7 @@
   "Sync metrics": "同期メトリクス",
   "Sync now": "今すぐ同期",
   "Sync online and offline conversions through a single Conversion API endpoint for better AI-personalization and enhanced measurement.": "単一のConversion APIエンドポイントでオンライン・オフラインコンバージョンを同期し、AIパーソナライゼーションと計測精度を向上させます。",
+  "sync operations": "同期操作",
   "sync operations in the last": "過去___日間の同期操作",
   "Sync runs over time": "同期実行履歴",
   "Sync size over time": "同期サイズの推移",
