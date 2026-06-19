@@ -1110,7 +1110,6 @@
   "Running": "実行中",
   "Runs": "実行",
   "Runs when Journey is triggered": "ジャーニーがトリガーされたときに実行",
-  "Sales": "セールス",
   "SAML SSO enables users to authenticate through their organization's identity provider, supporting just-in-time provisioning during login.": "SAML SSOにより、ユーザーは組織のIdPを通じて認証でき、ログイン時のジャストインタイムプロビジョニングをサポートします。",
   "Sample datasets": "サンプルデータセット",
   "Sampling": "サンプリング",
